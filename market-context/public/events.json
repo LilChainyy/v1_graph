@@ -1,0 +1,223 @@
+[
+  {
+    "id": "evt_tariff_sep14_2025",
+    "title": "Tariff Decision",
+    "date": "2025-09-14",
+    "category": "policy",
+    "status": "scheduled",
+    "summary": "White House to decide on China tariffs.",
+    "impact_sectors": ["Semiconductors", "Technology", "Manufacturing"],
+    "relevance": "high",
+    "scenarios": [
+      {
+        "label": "If delayed",
+        "stance": "positive",
+        "why": "Uncertainty falls, market relief expected.",
+        "proxies": ["SOXX"],
+        "example_tickers": ["NVDA"],
+        "historical": {
+          "reference_event_id": "evt_tariff_aug2019_delay",
+          "window_days": 5,
+          "proxy_move_pct": 4.8
+        }
+      },
+      {
+        "label": "If enforced",
+        "stance": "negative",
+        "why": "Costs and uncertainty persist, supply chain disruption.",
+        "proxies": ["SOXX"],
+        "example_tickers": ["NVDA"],
+        "historical": {
+          "reference_event_id": "evt_tariff_may2019_enforce",
+          "window_days": 5,
+          "proxy_move_pct": -3.2
+        }
+      }
+    ],
+    "impacted_assets": [
+      {
+        "ticker": "SOXX",
+        "sector": "Semiconductors",
+        "historical_move": "+4.8% (if delayed) / -3.2% (if enforced)"
+      },
+      {
+        "ticker": "NVDA",
+        "sector": "Semiconductors",
+        "historical_move": "Correlated with SOXX moves"
+      }
+    ],
+    "chart_dots": [
+      { "ticker": "SOXX", "date": "2025-09-14", "type": "policy" }
+    ],
+    "precedent_level": "medium",
+    "disclosure": "Educational context. Not investment advice."
+  },
+  {
+    "id": "evt_tariff_oct15_2025",
+    "title": "Tariff Escalation",
+    "date": "2025-10-15",
+    "category": "policy",
+    "status": "scheduled",
+    "summary": "Tariff hike may worsen trade tensions.",
+    "impact_sectors": ["Technology", "Consumer Goods", "Industrial"],
+    "relevance": "high",
+    "scenarios": [
+      {
+        "label": "If avoided",
+        "stance": "positive",
+        "why": "Trade tensions ease, market relief across sectors.",
+        "proxies": ["SPY", "QQQ"],
+        "example_tickers": ["AAPL", "MSFT"],
+        "historical": {
+          "reference_event_id": "evt_tariff_deescalation_2019",
+          "window_days": 3,
+          "proxy_move_pct": 2.1
+        }
+      },
+      {
+        "label": "If escalated",
+        "stance": "negative",
+        "why": "Broader market impact, supply chain disruption, cost pressures.",
+        "proxies": ["SPY", "QQQ"],
+        "example_tickers": ["AAPL", "MSFT"],
+        "historical": {
+          "reference_event_id": "evt_tariff_escalation_2018",
+          "window_days": 5,
+          "proxy_move_pct": -4.3
+        }
+      }
+    ],
+    "impacted_assets": [
+      {
+        "ticker": "SPY",
+        "sector": "Broad Market",
+        "historical_move": "+2.1% (if avoided) / -4.3% (if escalated)"
+      },
+      {
+        "ticker": "QQQ",
+        "sector": "Technology",
+        "historical_move": "Similar to SPY moves"
+      },
+      {
+        "ticker": "AAPL",
+        "sector": "Technology",
+        "historical_move": "Correlated with QQQ moves"
+      },
+      {
+        "ticker": "MSFT",
+        "sector": "Technology",
+        "historical_move": "Correlated with QQQ moves"
+      }
+    ],
+    "chart_dots": [
+      { "ticker": "SPY", "date": "2025-10-15", "type": "policy" }
+    ],
+    "precedent_level": "high",
+    "disclosure": "Educational context. Not investment advice."
+  },
+  {
+    "id": "evt_supreme_court_hearing_nov2025",
+    "title": "Supreme Court Tariff Hearing",
+    "date": "2025-11-05",
+    "category": "policy",
+    "status": "scheduled",
+    "summary": "Supreme Court reviews Trump's tariffs.",
+    "impact_sectors": ["Semiconductors", "Legal/Regulatory"],
+    "relevance": "medium",
+    "scenarios": [
+      {
+        "label": "If rollback signals",
+        "stance": "positive",
+        "why": "Markets anticipate relief, semiconductor sector rally expected.",
+        "proxies": ["SOXX"],
+        "example_tickers": ["NVDA"],
+        "historical": {
+          "reference_event_id": "evt_court_rollback_2021",
+          "window_days": 4,
+          "proxy_move_pct": 6.8
+        }
+      },
+      {
+        "label": "If upholds tariffs",
+        "stance": "negative",
+        "why": "Risk premium persists, continued pressure on affected sectors.",
+        "proxies": ["SOXX"],
+        "example_tickers": ["NVDA"],
+        "historical": {
+          "reference_event_id": "evt_court_uphold_2020",
+          "window_days": 3,
+          "proxy_move_pct": -4.2
+        }
+      },
+      {
+        "label": "If outcome delayed",
+        "stance": "neutral",
+        "why": "Uncertainty extended, muted market reaction expected.",
+        "proxies": ["SOXX"],
+        "example_tickers": ["NVDA"]
+      }
+    ],
+    "impacted_assets": [
+      {
+        "ticker": "SOXX",
+        "sector": "Semiconductors",
+        "historical_move": "+6.8% (if rollback) / -4.2% (if upheld)"
+      },
+      {
+        "ticker": "NVDA",
+        "sector": "Semiconductors",
+        "historical_move": "Correlated with SOXX moves"
+      }
+    ],
+    "chart_dots": [
+      { "ticker": "SOXX", "date": "2025-11-05", "type": "policy" }
+    ],
+    "precedent_level": "medium",
+    "disclosure": "Educational context. Not investment advice."
+  },
+  {
+    "id": "evt_treasury_10yr_sep11_2025",
+    "title": "10-yr Treasury Auction",
+    "date": "2025-09-11",
+    "category": "monetary",
+    "status": "scheduled",
+    "summary": "10-yr Treasury auction today.",
+    "impact_sectors": ["Bonds (TLT, IEF)", "Semiconductors (SMH, NVDA)", "Technology"],
+    "relevance": "high",
+    "scenarios": [],
+    "impacted_assets": [],
+    "chart_dots": [],
+    "precedent_level": "medium",
+    "disclosure": "Educational context. Not investment advice."
+  },
+  {
+    "id": "evt_treasury_30yr_sep25_2025",
+    "title": "30-yr Treasury Bond Auction",
+    "date": "2025-09-25",
+    "category": "monetary",
+    "status": "scheduled",
+    "summary": "30-yr Treasury bond auction.",
+    "impact_sectors": ["Bonds (TLT)", "Growth Tech (QQQ)", "Semiconductors"],
+    "relevance": "high",
+    "scenarios": [],
+    "impacted_assets": [],
+    "chart_dots": [],
+    "precedent_level": "medium",
+    "disclosure": "Educational context. Not investment advice."
+  },
+  {
+    "id": "evt_quad_witching_dec19_2025",
+    "title": "Quad-witching & Treasury Auction",
+    "date": "2025-12-19",
+    "category": "monetary",
+    "status": "scheduled",
+    "summary": "Quad-witching & Treasury auction coincide.",
+    "impact_sectors": ["Derivatives", "Bonds", "Tech ETFs (QQQ, SMH)"],
+    "relevance": "high",
+    "scenarios": [],
+    "impacted_assets": [],
+    "chart_dots": [],
+    "precedent_level": "high",
+    "disclosure": "Educational context. Not investment advice."
+  }
+]
