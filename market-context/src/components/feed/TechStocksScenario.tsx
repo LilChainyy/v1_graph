@@ -16,15 +16,17 @@ interface Scenario {
   metrics: Metric[];
 }
 
-export default function AuctionScenario({ date, activeTag }: Props) {
+export default function TechStocksScenario({ date, activeTag }: Props) {
   // Filter metrics based on active tag
   const filterMetricsByTag = (metrics: Metric[]) => {
     if (!activeTag) return metrics;
     
-    // Map tags to metric categories
+    // For tech stocks, show all metrics if Tech tag is selected
+    if (activeTag === 'Tech') return metrics;
+    
+    // For other tags, filter accordingly
     const tagToCategory: { [key: string]: string[] } = {
-      'Bonds': ['10Y yields', 'TLT', 'IEF'],
-      'Tech': ['S&P 500']
+      'Bonds': ['NVDA', 'TSLA', 'META'], // All tech stocks are indirect
     };
     
     const relevantCategories = tagToCategory[activeTag] || [];
@@ -37,19 +39,17 @@ export default function AuctionScenario({ date, activeTag }: Props) {
     {
       title: "Scenario 1: Strong demand (historical median reaction)",
       metrics: [
-        { label: "10Y yields", value: "↓", isPositive: true, tagType: 'direct' },
-        { label: "Last time (median): TLT", value: "+0.6% (~+$0.75)", isPositive: true, tagType: 'direct' },
-        { label: "Last time (median): IEF", value: "+0.4% (~+$0.35)", isPositive: true, tagType: 'direct' },
-        { label: "Last time (median): S&P 500", value: "+0.3% (~+$15) next 24h", isPositive: true, tagType: 'indirect' },
+        { label: "Last time (median): NVDA", value: "+0.8% (~+$1.20)", isPositive: true, tagType: 'indirect' },
+        { label: "Last time (median): TSLA", value: "+0.5% (~+$1.15)", isPositive: true, tagType: 'indirect' },
+        { label: "Last time (median): META", value: "+0.3% (~+$1.35)", isPositive: true, tagType: 'indirect' },
       ]
     },
     {
       title: "Scenario 2: Weak demand (historical median reaction)",
       metrics: [
-        { label: "10Y yields", value: "↑", isPositive: false, tagType: 'direct' },
-        { label: "Last time (median): TLT", value: "−0.6% (~−$0.75)", isPositive: false, tagType: 'direct' },
-        { label: "Last time (median): IEF", value: "−0.4% (~−$0.35)", isPositive: false, tagType: 'direct' },
-        { label: "Last time (median): S&P 500", value: "−0.2% (~−$10) next 24h", isPositive: false, tagType: 'indirect' },
+        { label: "Last time (median): NVDA", value: "−0.4% (~−$0.60)", isPositive: false, tagType: 'indirect' },
+        { label: "Last time (median): TSLA", value: "−0.2% (~−$0.46)", isPositive: false, tagType: 'indirect' },
+        { label: "Last time (median): META", value: "−0.1% (~−$0.45)", isPositive: false, tagType: 'indirect' },
       ]
     }
   ];
@@ -57,7 +57,7 @@ export default function AuctionScenario({ date, activeTag }: Props) {
   return (
     <section className="mt-4 rounded-2xl bg-white dark:bg-gray-800 ring-1 ring-gray-200 dark:ring-gray-700 shadow-sm p-4 md:p-5">
       <header className="mb-3 text-sm font-bold text-black dark:text-white">
-        Last time this happened (historical median reaction)
+        Last time this happened (tech stock reactions)
       </header>
 
       <div className="grid gap-4 md:grid-cols-2">

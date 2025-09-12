@@ -1,6 +1,6 @@
 import React from "react";
 import { MarketEvent } from "@/lib/events";
-import ScenarioBox from "./AuctionScenario";
+import AuctionScenario from "./AuctionScenario";
 
 type Props = {
   isOpen: boolean;
@@ -35,7 +35,7 @@ export default function BondPopup({ isOpen, onClose, event }: Props) {
 
         {/* If it's a Treasury Auction, render scenarios here */}
         {event?.type === "Treasury Auction" ? (
-          <ScenarioBox event={event} />
+          <AuctionScenario date={event.dateISO} />
         ) : (
           <div className="rounded-xl border p-4 text-sm text-gray-600">
             Select a Treasury auction to see demand scenarios here.

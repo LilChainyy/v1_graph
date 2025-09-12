@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { events } from '@/data/events';
 import EventCard from '@/components/EventCard';
 import CalendarView from '@/components/Calendar/CalendarView';
-import ContextModal from '@/components/feed/ContextModal';
+import ContextModal from '../components/feed/ContextModal';
 import { MarketEvent } from '@/lib/events';
 
 export default function Home() {
@@ -12,11 +12,37 @@ export default function Home() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSector, setSelectedSector] = useState<string>('');
   const [selectedEvent, setSelectedEvent] = useState<MarketEvent | null>(null);
+  const [activeTag, setActiveTag] = useState<string>('');
 
-  // Handle tag clicks
-  const handleTagClick = (tag: string, event: MarketEvent) => {
-    setSelectedSector(tag);
+  // Handle bond clicks
+  const handleOpenBonds = (event: MarketEvent, tag: string) => {
+    setSelectedSector("Bonds");
     setSelectedEvent(event);
+    setActiveTag(tag);
+    setModalOpen(true);
+  };
+
+  // Handle tech clicks
+  const handleOpenTech = (event: MarketEvent, tag: string) => {
+    setSelectedSector("Tech");
+    setSelectedEvent(event);
+    setActiveTag(tag);
+    setModalOpen(true);
+  };
+
+  // Handle tariff clicks
+  const handleOpenTariff = (event: MarketEvent, tag: string) => {
+    setSelectedSector("Tariff");
+    setSelectedEvent(event);
+    setActiveTag(tag);
+    setModalOpen(true);
+  };
+
+  // Handle FOMC clicks
+  const handleOpenFOMC = (event: MarketEvent, tag: string) => {
+    setSelectedSector("Macro");
+    setSelectedEvent(event);
+    setActiveTag(tag);
     setModalOpen(true);
   };
 
@@ -66,7 +92,10 @@ export default function Home() {
                   <EventCard
                     key={event.id}
                     event={event}
-                    onTagClick={handleTagClick}
+                    onOpenBonds={handleOpenBonds}
+                    onOpenTech={handleOpenTech}
+                    onOpenTariff={handleOpenTariff}
+                    onOpenFOMC={handleOpenFOMC}
                   />
                 ))}
               </div>
@@ -82,6 +111,7 @@ export default function Home() {
         onClose={() => setModalOpen(false)}
         sector={selectedSector}
         event={selectedEvent}
+        activeTag={activeTag}
       />
     </div>
   );
