@@ -1,0 +1,339 @@
+[
+  {
+    "id": "nvda_gs_comm_2025_09_08",
+    "ticker": "NVDA",
+    "title": "Goldman Communacopia + Technology Conference (NVDA session)",
+    "date": "2025-09-08",
+    "eventType": "Conference",
+    "isBinary": false,
+    "isRecurring": "episodic",
+    "tags": [
+      "Tech",
+      "AI",
+      "Semis"
+    ],
+    "direct": true,
+    "links": [],
+    "notes": "Mgmt fireside / roadmap Q&A (time TBD)"
+  },
+  {
+    "id": "nvda_product_rubin_2025_09_09",
+    "ticker": "NVDA",
+    "title": "Rubin CPX architecture news cycle",
+    "date": "2025-09-09",
+    "eventType": "Product",
+    "isBinary": false,
+    "isRecurring": "episodic",
+    "tags": [
+      "Tech",
+      "AI",
+      "Semis"
+    ],
+    "direct": true,
+    "notes": "Massive-context inference positioning; track follow-on coverage"
+  },
+  {
+    "id": "nvda_treasury_auction_2025_09_15",
+    "ticker": "NVDA",
+    "title": "Treasury Auction affects NVDA",
+    "date": "2025-09-15",
+    "time": "13:00 ET",
+    "eventType": "Treasury Auction",
+    "isBinary": false,
+    "isRecurring": "fixed",
+    "tags": [
+      "Bonds",
+      "Rates",
+      "Broad Market",
+      "Tech"
+    ],
+    "direct": false,
+    "links": [
+      "https://www.treasurydirect.gov/"
+    ],
+    "notes": "Macro event impact on NVDA: U.S. Treasury auction"
+  },
+  {
+    "id": "nvda_treasury_auction_2025_09_16",
+    "ticker": "NVDA",
+    "title": "Treasury Auction affects NVDA",
+    "date": "2025-09-16",
+    "time": "13:00 ET",
+    "eventType": "Treasury Auction",
+    "isBinary": false,
+    "isRecurring": "fixed",
+    "tags": [
+      "Bonds",
+      "Rates",
+      "Broad Market",
+      "Tech"
+    ],
+    "direct": false,
+    "links": [
+      "https://www.treasurydirect.gov/"
+    ],
+    "notes": "Macro event impact on NVDA: U.S. Treasury auction"
+  },
+  {
+    "id": "nvda_fomc_overlap_2025_09_17",
+    "ticker": "NVDA",
+    "title": "FOMC decision overlaps trading session",
+    "date": "2025-09-17",
+    "eventType": "FOMC",
+    "isBinary": true,
+    "isRecurring": "fixed",
+    "tags": [
+      "Bonds",
+      "Rates",
+      "Broad Market",
+      "Tech"
+    ],
+    "direct": false,
+    "notes": "Rate/dots sensitivity; duration impact on growth"
+  },
+  {
+    "id": "nvda_treasury_auction_2025_09_17",
+    "ticker": "NVDA",
+    "title": "Treasury Auction affects NVDA",
+    "date": "2025-09-17",
+    "time": "13:00 ET",
+    "eventType": "Treasury Auction",
+    "isBinary": false,
+    "isRecurring": "fixed",
+    "tags": [
+      "Bonds",
+      "Rates",
+      "Broad Market",
+      "Tech"
+    ],
+    "direct": false,
+    "links": [
+      "https://www.treasurydirect.gov/"
+    ],
+    "notes": "Macro event impact on NVDA: U.S. Treasury auction"
+  },
+  {
+    "id": "nvda_treasury_auction_2025_10_15",
+    "ticker": "NVDA",
+    "title": "Treasury Auction affects NVDA",
+    "date": "2025-10-15",
+    "time": "13:00 ET",
+    "eventType": "Treasury Auction",
+    "isBinary": false,
+    "isRecurring": "fixed",
+    "tags": [
+      "Bonds",
+      "Rates",
+      "Broad Market",
+      "Tech"
+    ],
+    "direct": false,
+    "links": [
+      "https://www.treasurydirect.gov/"
+    ],
+    "notes": "Macro event impact on NVDA: U.S. Treasury auction"
+  },
+  {
+    "id": "nvda_treasury_auction_2025_10_16",
+    "ticker": "NVDA",
+    "title": "Treasury Auction affects NVDA",
+    "date": "2025-10-16",
+    "time": "13:00 ET",
+    "eventType": "Treasury Auction",
+    "isBinary": false,
+    "isRecurring": "fixed",
+    "tags": [
+      "Bonds",
+      "Rates",
+      "Broad Market",
+      "Tech"
+    ],
+    "direct": false,
+    "links": [
+      "https://www.treasurydirect.gov/"
+    ],
+    "notes": "Macro event impact on NVDA: U.S. Treasury auction"
+  },
+  {
+    "id": "nvda_treasury_auction_2025_10_17",
+    "ticker": "NVDA",
+    "title": "Treasury Auction affects NVDA",
+    "date": "2025-10-17",
+    "time": "13:00 ET",
+    "eventType": "Treasury Auction",
+    "isBinary": false,
+    "isRecurring": "fixed",
+    "tags": [
+      "Bonds",
+      "Rates",
+      "Broad Market",
+      "Tech"
+    ],
+    "direct": false,
+    "links": [
+      "https://www.treasurydirect.gov/"
+    ],
+    "notes": "Macro event impact on NVDA: U.S. Treasury auction"
+  },
+  {
+    "id": "nvda_treasury_auction_2025_11_15",
+    "ticker": "NVDA",
+    "title": "Treasury Auction affects NVDA",
+    "date": "2025-11-15",
+    "time": "13:00 ET",
+    "eventType": "Treasury Auction",
+    "isBinary": false,
+    "isRecurring": "fixed",
+    "tags": [
+      "Bonds",
+      "Rates",
+      "Broad Market",
+      "Tech"
+    ],
+    "direct": false,
+    "links": [
+      "https://www.treasurydirect.gov/"
+    ],
+    "notes": "Macro event impact on NVDA: U.S. Treasury auction"
+  },
+  {
+    "id": "nvda_treasury_auction_2025_11_16",
+    "ticker": "NVDA",
+    "title": "Treasury Auction affects NVDA",
+    "date": "2025-11-16",
+    "time": "13:00 ET",
+    "eventType": "Treasury Auction",
+    "isBinary": false,
+    "isRecurring": "fixed",
+    "tags": [
+      "Bonds",
+      "Rates",
+      "Broad Market",
+      "Tech"
+    ],
+    "direct": false,
+    "links": [
+      "https://www.treasurydirect.gov/"
+    ],
+    "notes": "Macro event impact on NVDA: U.S. Treasury auction"
+  },
+  {
+    "id": "nvda_treasury_auction_2025_11_17",
+    "ticker": "NVDA",
+    "title": "Treasury Auction affects NVDA",
+    "date": "2025-11-17",
+    "time": "13:00 ET",
+    "eventType": "Treasury Auction",
+    "isBinary": false,
+    "isRecurring": "fixed",
+    "tags": [
+      "Bonds",
+      "Rates",
+      "Broad Market",
+      "Tech"
+    ],
+    "direct": false,
+    "links": [
+      "https://www.treasurydirect.gov/"
+    ],
+    "notes": "Macro event impact on NVDA: U.S. Treasury auction"
+  },
+  {
+    "id": "nvda_treasury_auction_2025_12_15",
+    "ticker": "NVDA",
+    "title": "Treasury Auction affects NVDA",
+    "date": "2025-12-15",
+    "time": "13:00 ET",
+    "eventType": "Treasury Auction",
+    "isBinary": false,
+    "isRecurring": "fixed",
+    "tags": [
+      "Bonds",
+      "Rates",
+      "Broad Market",
+      "Tech"
+    ],
+    "direct": false,
+    "links": [
+      "https://www.treasurydirect.gov/"
+    ],
+    "notes": "Macro event impact on NVDA: U.S. Treasury auction"
+  },
+  {
+    "id": "nvda_treasury_auction_2025_12_16",
+    "ticker": "NVDA",
+    "title": "Treasury Auction affects NVDA",
+    "date": "2025-12-16",
+    "time": "13:00 ET",
+    "eventType": "Treasury Auction",
+    "isBinary": false,
+    "isRecurring": "fixed",
+    "tags": [
+      "Bonds",
+      "Rates",
+      "Broad Market",
+      "Tech"
+    ],
+    "direct": false,
+    "links": [
+      "https://www.treasurydirect.gov/"
+    ],
+    "notes": "Macro event impact on NVDA: U.S. Treasury auction"
+  },
+  {
+    "id": "nvda_treasury_auction_2025_12_17",
+    "ticker": "NVDA",
+    "title": "Treasury Auction affects NVDA",
+    "date": "2025-12-17",
+    "time": "13:00 ET",
+    "eventType": "Treasury Auction",
+    "isBinary": false,
+    "isRecurring": "fixed",
+    "tags": [
+      "Bonds",
+      "Rates",
+      "Broad Market",
+      "Tech"
+    ],
+    "direct": false,
+    "links": [
+      "https://www.treasurydirect.gov/"
+    ],
+    "notes": "Macro event impact on NVDA: U.S. Treasury auction"
+  },
+  {
+    "id": "nvda_test_event_2025_09_20",
+    "ticker": "NVDA",
+    "title": "Test Event for Recently Added",
+    "date": "2025-09-20",
+    "eventType": "Product",
+    "isBinary": false,
+    "isRecurring": "one-off",
+    "tags": [
+      "Tech",
+      "AI"
+    ],
+    "direct": true,
+    "notes": "This is a test event to demonstrate recently added functionality",
+    "createdAt": "2025-09-14T21:06:54.985399Z",
+    "source": "Manual"
+  },
+  {
+    "id": "nvda_new_test_2025_09_25",
+    "ticker": "NVDA",
+    "title": "New Test Event - Recently Added Demo",
+    "date": "2025-09-25",
+    "eventType": "Conference",
+    "isBinary": false,
+    "isRecurring": "episodic",
+    "tags": [
+      "Tech",
+      "AI",
+      "Semis"
+    ],
+    "direct": true,
+    "notes": "This is a new event to test the recently added functionality",
+    "createdAt": "2025-09-14T21:07:41.367693Z",
+    "source": "Manual"
+  }
+]

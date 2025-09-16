@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Ticker {
+  id        String   @id @default(cuid())
+  symbol    String   @unique
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  events    Event[]
+  
+  @@map("tickers")
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  tickerId    String
+  title       String
+  date        String   // YYYY-MM-DD format
+  time        String?  // Optional time
+  eventType   String   // EventType enum as string
+  direct      Boolean
+  isBinary    Boolean
+  isRecurring String   // RecurringType enum as string
+  tags        String   // JSON string of ImpactTag array
+  source      String   // EventSource enum as string
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Optional fields
+  links       String?  // JSON string of string array
+  notes       String?
+  
+  // Relations
+  ticker      Ticker   @relation(fields: [tickerId], references: [id], onDelete: Cascade)
+  
+  @@map("events")
+}

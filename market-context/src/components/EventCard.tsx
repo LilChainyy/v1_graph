@@ -21,7 +21,7 @@ export default function EventCard({ event, onOpenBonds, onOpenTech, onOpenTariff
 
       <h3 className="font-semibold mb-3">{event.title}</h3>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 mb-3">
         {Array.from(new Set(event.tags)).map((tag) => {
           const isBond = tag === "Bonds";
           const isTech = tag === "Tech";
@@ -50,6 +50,16 @@ export default function EventCard({ event, onOpenBonds, onOpenTech, onOpenTariff
             </button>
           );
         })}
+      </div>
+
+      {/* Legend line */}
+      <div className="mb-3 text-xs text-gray-500 border-t border-gray-100 pt-2">
+        Stats = historical tendencies • window: next 24h • not a prediction.
+      </div>
+
+      {/* Compliance footer */}
+      <div className="text-xs text-gray-400 text-center">
+        Educational—historical tendencies only. This is not investment advice.
       </div>
     </div>
   );

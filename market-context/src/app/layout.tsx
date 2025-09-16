@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
+import SearchBar from "@/components/SearchBar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,14 +35,17 @@ export default function RootLayout({
               <Link href="/" className="text-xl font-bold text-gray-900">
                 Market Event Context
               </Link>
-              <nav className="flex space-x-6">
-                <Link href="/" className="text-gray-600 hover:text-gray-900">
-                  Feed
-                </Link>
-                <Link href="/about" className="text-gray-600 hover:text-gray-900">
-                  About & Disclosures
-                </Link>
-              </nav>
+              <div className="flex items-center space-x-6">
+                <SearchBar className="w-80" />
+                <nav className="flex space-x-6">
+                  <Link href="/" className="text-gray-600 hover:text-gray-900">
+                    Feed
+                  </Link>
+                  <Link href="/about" className="text-gray-600 hover:text-gray-900">
+                    About & Disclosures
+                  </Link>
+                </nav>
+              </div>
             </div>
           </div>
         </header>

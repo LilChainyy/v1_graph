@@ -1,11 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { events } from '@/data/events';
 import EventCard from '@/components/EventCard';
 import CalendarView from '@/components/Calendar/CalendarView';
 import ContextModal from '../components/feed/ContextModal';
-import { MarketEvent } from '@/lib/events';
+import WeeklyBanner from '@/components/WeeklyBanner';
+import SceneSetter from '@/components/SceneSetter';
+import { MarketEvent, BannerData, getSceneData, SceneData } from '@/lib/events';
 
 export default function Home() {
   const [view, setView] = useState<'calendar' | 'feed'>('calendar');
@@ -13,6 +15,45 @@ export default function Home() {
   const [selectedSector, setSelectedSector] = useState<string>('');
   const [selectedEvent, setSelectedEvent] = useState<MarketEvent | null>(null);
   const [activeTag, setActiveTag] = useState<string>('');
+  const [sceneData, setSceneData] = useState<SceneData | null>(null);
+
+  // Sample banner data - in a real app this would come from an API
+  const bannerData: BannerData = {
+    spxWtdPct: 1.25, // S&P 500 up 1.25% week to date
+    upcomingEvents: [
+      { title: "10-yr Treasury auction", date: "Sep 11" },
+      { title: "China tariff decision", date: "Sep 14" },
+      { title: "FOMC decision", date: "Sep 17" }
+    ]
+  };
+
+  // Load scene data on component mount
+  useEffect(() => {
+    const loadSceneData = async () => {
+      try {
+        const data = await getSceneData();
+        setSceneData(data);
+      } catch (error) {
+        console.warn('Failed to load scene data:', error);
+        // Fallback to default data
+        setSceneData({
+          marketTrend: 'flat',
+          sentiment: 'neutral',
+          rates: 'steady',
+          fear: 'normal',
+          nextEvent: {
+            type: 'CPI',
+            weekday: 'Thu',
+            why: 'checks price pressures'
+          },
+          sources: [],
+          attribution: 'auto summary (defaults)'
+        });
+      }
+    };
+
+    loadSceneData();
+  }, []);
 
   // Handle bond clicks
   const handleOpenBonds = (event: MarketEvent, tag: string) => {
@@ -77,9 +118,21 @@ export default function Home() {
 
         {/* Content */}
         {view === 'calendar' ? (
-          <CalendarView events={events} />
+          <>
+            {/* Scene Setter Banner */}
+            {sceneData && <SceneSetter data={sceneData} />}
+            
+            {/* Calendar View */}
+            <CalendarView events={events} />
+          </>
         ) : (
           <>
+            {/* Scene Setter Banner */}
+            {sceneData && <SceneSetter data={sceneData} />}
+            
+            {/* Weekly Banner */}
+            <WeeklyBanner bannerData={bannerData} />
+            
             {/* Feed Grid */}
             {events.length === 0 ? (
               <div className="text-center py-12">

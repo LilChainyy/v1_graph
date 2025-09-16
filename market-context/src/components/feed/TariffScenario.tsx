@@ -38,7 +38,7 @@ interface TariffCard {
 
 export default function TariffScenario({ date, cardType, activeTag }: Props) {
   // Filter effects and stocks based on active tag
-  const filterByTag = (items: any[], tagType: 'direct' | 'indirect') => {
+  const filterByTag = (items: any[], tagType: 'direct' | 'indirect') => { // eslint-disable-line @typescript-eslint/no-explicit-any
     if (!activeTag) return items;
     
     // Map tags to categories

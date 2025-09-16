@@ -4,7 +4,7 @@ import MetricRow from './MetricRow';
 
 type Props = { 
   date?: string;
-  event?: any; // FOMC event data
+  event?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
   activeTag?: string;
 };
 
