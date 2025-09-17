@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-import { CompanyEvent } from '@/types/company';
+import { DatabaseEvent } from '@/types/company';
+import { deduplicateEvents } from '@/lib/eventDeduplication';
 
 export async function GET(request: NextRequest) {
   try {
@@ -26,31 +27,43 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Fetch events for this ticker
-    const events = await prisma.event.findMany({
-      where: { tickerId: tickerRecord.id },
-      orderBy: { date: 'asc' },
-    });
+    // Fetch both ticker-specific and global events
+    const [tickerEvents, globalEvents] = await Promise.all([
+      // Ticker-specific events
+      prisma.event.findMany({
+        where: { tickerId: tickerRecord.id },
+        orderBy: { start: 'asc' },
+      }),
+      // Global macro/regulatory events
+      prisma.event.findMany({
+        where: { tickerId: null },
+        orderBy: { start: 'asc' },
+      }),
+    ]);
 
-    // Transform database events to CompanyEvent format
-    const companyEvents: CompanyEvent[] = events.map(event => ({
+    // Combine and transform events
+    const allEvents = [...tickerEvents, ...globalEvents];
+    
+    const databaseEvents: DatabaseEvent[] = allEvents.map(event => ({
       id: event.id,
-      ticker: ticker as any, // Type assertion for now
+      tickerId: event.tickerId || undefined,
       title: event.title,
-      date: event.date,
-      time: event.time || undefined,
-      eventType: event.eventType as any,
-      direct: event.direct,
-      isBinary: event.isBinary,
-      isRecurring: event.isRecurring as any,
-      tags: JSON.parse(event.tags),
+      start: event.start,
+      end: event.end || undefined,
+      category: event.category as any,
+      timezone: event.timezone,
       source: event.source as any,
       createdAt: event.createdAt.toISOString(),
+      updatedAt: event.updatedAt.toISOString(),
       links: event.links ? JSON.parse(event.links) : undefined,
       notes: event.notes || undefined,
+      externalId: event.externalId || undefined,
     }));
 
-    return NextResponse.json(companyEvents);
+    // Apply deduplication safeguard
+    const deduplicatedEvents = deduplicateEvents(databaseEvents);
+
+    return NextResponse.json(deduplicatedEvents);
   } catch (error) {
     console.error('Error fetching events:', error);
     return NextResponse.json(

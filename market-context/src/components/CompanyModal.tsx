@@ -1,25 +1,34 @@
 'use client';
 
-import { CompanyEvent, CompanyTicker } from '@/types/company';
-import { getDirectPillStyle, getEventTypeColor } from '@/lib/companyLoader';
+import { DatabaseEvent, CompanyTicker } from '@/types/company';
 
 interface CompanyModalProps {
   isOpen: boolean;
   onClose: () => void;
-  event: CompanyEvent;
+  event: DatabaseEvent;
   ticker: CompanyTicker;
 }
 
 export default function CompanyModal({ isOpen, onClose, event, ticker }: CompanyModalProps) {
   if (!isOpen) return null;
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+  const formatDate = (dateString: string | undefined) => {
+    if (!dateString) return 'Invalid Date';
+    
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Invalid Date';
+      
+      return date.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch (error) {
+      console.warn('Invalid date string:', dateString, error);
+      return 'Invalid Date';
+    }
   };
 
   const formatHistoryWindow = (window: string) => {
@@ -50,8 +59,8 @@ export default function CompanyModal({ isOpen, onClose, event, ticker }: Company
                   {event.title}
                 </h3>
                 <p className="text-sm text-gray-500">
-                  {formatDate(event.date)}
-                  {event.time && ` • ${event.time}`}
+                  {formatDate(event.start)}
+                  {event.end && ` - ${formatDate(event.end)}`}
                 </p>
               </div>
               <button
@@ -67,33 +76,37 @@ export default function CompanyModal({ isOpen, onClose, event, ticker }: Company
 
           {/* Content */}
           <div className="px-6 py-4">
-            {/* Event Type and Direct/Indirect */}
+            {/* Event Category and Direct/Indirect */}
             <div className="flex items-center gap-2 mb-4">
-              <span className={`px-3 py-1 rounded-full text-sm font-medium border ${getEventTypeColor(event.eventType)}`}>
-                {event.eventType}
+              <span className={`px-3 py-1 rounded-full text-sm font-medium border ${
+                event.category === 'EARNINGS' ? 'bg-blue-100 text-blue-700 border-blue-200' :
+                event.category === 'SEC_FILINGS' ? 'bg-green-100 text-green-700 border-green-200' :
+                event.category.startsWith('MACRO_') ? 'bg-red-100 text-red-700 border-red-200' :
+                event.category === 'REGULATORY' ? 'bg-orange-100 text-orange-700 border-orange-200' :
+                'bg-gray-100 text-gray-700 border-gray-200'
+              }`}>
+                {event.category}
               </span>
-              <span className={`px-3 py-1 rounded-full text-sm font-medium border ${getDirectPillStyle(event.direct)}`}>
-                {event.direct ? 'Direct' : 'Indirect'}
+              <span className={`px-3 py-1 rounded-full text-sm font-medium border ${
+                event.tickerId !== null 
+                  ? 'bg-purple-100 text-purple-700 border-purple-200' 
+                  : 'bg-gray-100 text-gray-700 border-gray-200'
+              }`}>
+                {event.tickerId !== null ? 'Direct' : 'Indirect'}
               </span>
-              {event.isBinary && (
-                <span className="px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-700 border border-yellow-200">
-                  Binary Event
-                </span>
-              )}
+              <span className="px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-700 border border-gray-200">
+                {event.source}
+              </span>
             </div>
 
-            {/* Tags */}
+            {/* Event Details */}
             <div className="mb-4">
-              <h4 className="text-sm font-medium text-gray-700 mb-2">Impact Areas</h4>
-              <div className="flex flex-wrap gap-2">
-                {event.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200"
-                  >
-                    {tag}
-                  </span>
-                ))}
+              <h4 className="text-sm font-medium text-gray-700 mb-2">Event Details</h4>
+              <div className="text-sm text-gray-600">
+                <p><strong>Category:</strong> {event.category}</p>
+                <p><strong>Source:</strong> {event.source}</p>
+                <p><strong>Timezone:</strong> {event.timezone}</p>
+                {event.externalId && <p><strong>External ID:</strong> {event.externalId}</p>}
               </div>
             </div>
 
@@ -105,95 +118,18 @@ export default function CompanyModal({ isOpen, onClose, event, ticker }: Company
               </div>
             )}
 
-            {/* Historical Tendency */}
-            {event.history && (
-              <div className="mb-4">
-                <h4 className="text-sm font-bold text-black mb-2">
-                  Last time this happened (historical tendency)
-                </h4>
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-600">Window:</span>
-                      <span className="ml-2 font-medium">{formatHistoryWindow(event.history.window)}</span>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">Sample Size:</span>
-                      <span className="ml-2 font-medium">N={event.history.sampleSize}</span>
-                    </div>
-                    {event.history.medianPct && (
-                      <div className="col-span-2">
-                        <span className="text-gray-600">Median Change:</span>
-                        <span className={`ml-2 font-medium ${
-                          event.history.medianPct > 0 ? 'text-green-600' : 'text-red-600'
-                        }`}>
-                          {event.history.medianPct > 0 ? '+' : ''}{event.history.medianPct}%
-                        </span>
-                        {event.history.medianDollar && (
-                          <span className="ml-2 text-gray-500">
-                            (~{event.history.medianDollar > 0 ? '+' : ''}${event.history.medianDollar.toFixed(2)})
-                          </span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Scenarios or Effects */}
-            {event.isBinary ? (
-              <div className="mb-4">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Scenarios</h4>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                    <h5 className="text-sm font-medium text-green-800 mb-1">Scenario A (Positive)</h5>
-                    <p className="text-xs text-green-700">
-                      {event.eventType === 'Earnings' ? 'Beat expectations' : 
-                       event.eventType === 'FOMC' ? 'Dovish stance' : 'Favorable outcome'}
-                    </p>
-                  </div>
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                    <h5 className="text-sm font-medium text-red-800 mb-1">Scenario B (Negative)</h5>
-                    <p className="text-xs text-red-700">
-                      {event.eventType === 'Earnings' ? 'Miss expectations' : 
-                       event.eventType === 'FOMC' ? 'Hawkish stance' : 'Unfavorable outcome'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="mb-4">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Effects</h4>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
-                    <span className="text-sm text-gray-700">
-                      <strong>Direct effects:</strong> {event.direct ? 'This event directly impacts ' + ticker : 'No direct effects'}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 bg-gray-500 rounded-full"></span>
-                    <span className="text-sm text-gray-700">
-                      <strong>Indirect effects:</strong> {!event.direct ? 'Market-wide spillover effects' : 'Limited indirect effects'}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {/* Links */}
             {event.links && event.links.length > 0 && (
               <div className="mb-4">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Sources</h4>
-                <div className="space-y-1">
+                <h4 className="text-sm font-medium text-gray-700 mb-2">Related Links</h4>
+                <div className="space-y-2">
                   {event.links.map((link, index) => (
                     <a
                       key={index}
                       href={link}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-blue-600 hover:text-blue-800 underline block"
+                      className="block text-sm text-blue-600 hover:text-blue-800 underline"
                     >
                       {link}
                     </a>
@@ -201,6 +137,45 @@ export default function CompanyModal({ isOpen, onClose, event, ticker }: Company
                 </div>
               </div>
             )}
+            {/* Event Impact */}
+            <div className="mb-4">
+              <h4 className="text-sm font-medium text-gray-700 mb-2">Event Impact</h4>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                  <h5 className="text-sm font-medium text-green-800 mb-1">Positive Scenario</h5>
+                  <p className="text-xs text-green-700">
+                    {event.category === 'EARNINGS' ? 'Beat expectations' : 
+                     event.category === 'MACRO_FOMC' ? 'Dovish stance' : 'Favorable outcome'}
+                  </p>
+                </div>
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                  <h5 className="text-sm font-medium text-red-800 mb-1">Negative Scenario</h5>
+                  <p className="text-xs text-red-700">
+                    {event.category === 'EARNINGS' ? 'Miss expectations' : 
+                     event.category === 'MACRO_FOMC' ? 'Hawkish stance' : 'Unfavorable outcome'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Event Effects */}
+            <div className="mb-4">
+              <h4 className="text-sm font-medium text-gray-700 mb-2">Event Effects</h4>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
+                  <span className="text-sm text-gray-700">
+                    <strong>Direct effects:</strong> {event.tickerId !== null ? 'This event directly impacts ' + ticker : 'No direct effects'}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 bg-gray-500 rounded-full"></span>
+                  <span className="text-sm text-gray-700">
+                    <strong>Indirect effects:</strong> {event.tickerId === null ? 'Market-wide spillover effects' : 'Limited indirect effects'}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Footer */}

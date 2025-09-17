@@ -23,26 +23,27 @@ model Ticker {
 }
 
 model Event {
-  id          String   @id @default(cuid())
-  tickerId    String
-  title       String
-  date        String   // YYYY-MM-DD format
-  time        String?  // Optional time
-  eventType   String   // EventType enum as string
-  direct      Boolean
-  isBinary    Boolean
-  isRecurring String   // RecurringType enum as string
-  tags        String   // JSON string of ImpactTag array
-  source      String   // EventSource enum as string
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              String   @id @default(cuid())
+  tickerId        String?  // Nullable for global events
+  title           String
+  normalizedTitle String   // Normalized title for deduplication
+  start           String   // YYYY-MM-DD format
+  end             String?  // YYYY-MM-DD format (optional)
+  category        String   // EventCategory enum as string
+  timezone        String   @default("UTC")
+  source          String   // EventSource enum as string
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
   
   // Optional fields
   links       String?  // JSON string of string array
   notes       String?
+  externalId  String?  // External API ID for deduplication
   
   // Relations
-  ticker      Ticker   @relation(fields: [tickerId], references: [id], onDelete: Cascade)
+  ticker      Ticker?  @relation(fields: [tickerId], references: [id], onDelete: Cascade)
   
+  // Composite unique index for deduplication
+  @@unique([tickerId, start, category, normalizedTitle])
   @@map("events")
 }

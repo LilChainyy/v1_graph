@@ -49,8 +49,11 @@ export const ALL_IMPACT_TAGS = [...DIRECT_IMPACT_TAGS, ...INDIRECT_IMPACT_TAGS] 
 
 export type ImpactTag = typeof ALL_IMPACT_TAGS[number];
 
+// Event categories
+export type EventCategory = 'EARNINGS' | 'SEC_FILINGS' | 'MACRO_FOMC' | 'MACRO_CPI' | 'MACRO_JOBS' | 'MACRO_GDP' | 'REGULATORY';
+
 // Required source types for event classification
-export type EventSource = 'IR' | 'FOMC' | 'Treasury' | 'USTR' | 'BIS' | 'Manual' | 'Seed' | 'Competitor';
+export type EventSource = 'POLYGON' | 'FINNHUB' | 'SEC_EDGAR' | 'TRADING_ECONOMICS' | 'ECON_DB' | 'SEC_SCRAPER' | 'FINRA_SCRAPER' | 'MANUAL' | 'SEED';
 
 // Required recurring types
 export type RecurringType = 'fixed' | 'episodic' | 'one-off';
@@ -113,6 +116,26 @@ export const EVENT_SCOPE = {
   }
 } as const;
 
+// New simplified event interface for database
+export interface DatabaseEvent {
+  id: string;
+  tickerId?: string;         // Nullable for global events
+  title: string;
+  start: string;             // YYYY-MM-DD format
+  end?: string;              // YYYY-MM-DD format (optional)
+  category: EventCategory;
+  timezone: string;          // Default "UTC"
+  source: EventSource;
+  createdAt: string;         // ISO 8601 timestamp
+  updatedAt: string;         // ISO 8601 timestamp
+  
+  // Optional fields
+  links?: string[];          // source URLs
+  notes?: string;            // short description
+  externalId?: string;       // External API ID for deduplication
+}
+
+// Legacy interface for backward compatibility
 export interface CompanyEvent {
   // Required fields - all events must have these
   id: string;                // "nvda_2025q3_earnings"

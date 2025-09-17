@@ -1,15 +1,43 @@
 'use client';
 
-import { CompanyEvent } from '@/types/company';
-import { getDirectPillStyle, getEventTypeColor } from '@/lib/companyLoader';
+import { DatabaseEvent } from '@/types/company';
 
 interface ListViewProps {
-  events: CompanyEvent[];
-  onEventClick: (event: CompanyEvent) => void;
+  events: DatabaseEvent[];
+  onEventClick: (event: DatabaseEvent) => void;
 }
 
+// Safe date parsing utility
+const parseEventDate = (dateString: string | undefined): Date | null => {
+  if (!dateString || typeof dateString !== 'string') {
+    return null;
+  }
+  
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return null;
+    }
+    return date;
+  } catch (error) {
+    console.warn('Invalid date string:', dateString, error);
+    return null;
+  }
+};
+
 export default function ListView({ events, onEventClick }: ListViewProps) {
-  const sortedEvents = [...events].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const sortedEvents = [...events]
+    .filter(event => {
+      const dateString = event.start || (event as any).date;
+      return parseEventDate(dateString) !== null;
+    })
+    .sort((a, b) => {
+      const dateA = parseEventDate(a.start || (a as any).date);
+      const dateB = parseEventDate(b.start || (b as any).date);
+      
+      if (!dateA || !dateB) return 0;
+      return dateA.getTime() - dateB.getTime();
+    });
 
   return (
     <div className="bg-white rounded-lg border border-gray-200">
@@ -24,73 +52,76 @@ export default function ListView({ events, onEventClick }: ListViewProps) {
             No events found for the selected filters
           </div>
         ) : (
-          sortedEvents.map((event) => (
-            <div
-              key={event.id}
-              className="p-4 hover:bg-gray-50 cursor-pointer transition-colors"
-              onClick={() => onEventClick(event)}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getEventTypeColor(event.eventType)}`}>
-                      {event.eventType}
-                    </span>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getDirectPillStyle(event.direct)}`}>
-                      {event.direct ? 'Direct' : 'Indirect'}
-                    </span>
-                    {event.isBinary && (
-                      <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700 border border-yellow-200">
-                        Binary
+          sortedEvents.map((event) => {
+            const eventDate = parseEventDate(event.start || (event as any).date);
+            const isDirect = event.tickerId !== null;
+            
+            return (
+              <div
+                key={event.id}
+                className="p-4 hover:bg-gray-50 cursor-pointer transition-colors"
+                onClick={() => onEventClick(event)}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium border ${
+                        event.category === 'EARNINGS' ? 'bg-blue-100 text-blue-700 border-blue-200' :
+                        event.category === 'SEC_FILINGS' ? 'bg-green-100 text-green-700 border-green-200' :
+                        event.category.startsWith('MACRO_') ? 'bg-red-100 text-red-700 border-red-200' :
+                        event.category === 'REGULATORY' ? 'bg-orange-100 text-orange-700 border-orange-200' :
+                        'bg-gray-100 text-gray-700 border-gray-200'
+                      }`}>
+                        {event.category}
                       </span>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium border ${
+                        isDirect 
+                          ? 'bg-purple-100 text-purple-700 border-purple-200' 
+                          : 'bg-gray-100 text-gray-700 border-gray-200'
+                      }`}>
+                        {isDirect ? 'Direct' : 'Indirect'}
+                      </span>
+                  </div>
+                  
+                    <h3 className="font-medium text-gray-900 mb-1">{event.title}</h3>
+                    
+                    <div className="flex items-center gap-4 text-sm text-gray-500 mb-2">
+                      <span>{eventDate ? eventDate.toLocaleDateString('en-US', { 
+                        weekday: 'short', 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric' 
+                      }) : 'Invalid Date'}</span>
+                      <span>{event.source}</span>
+                    </div>
+                    
+                    {event.notes && (
+                      <p className="text-sm text-gray-600 mb-2">{event.notes}</p>
+                    )}
+                    
+                    {event.links && event.links.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {event.links.map((link, index) => (
+                          <a
+                            key={index}
+                            href={link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700 border border-blue-200 hover:bg-blue-200"
+                          >
+                            Link {index + 1}
+                          </a>
+                        ))}
+                      </div>
                     )}
                   </div>
-                  
-                  <h3 className="font-medium text-gray-900 mb-1">{event.title}</h3>
-                  
-                  <div className="flex items-center gap-4 text-sm text-gray-500 mb-2">
-                    <span>{new Date(event.date).toLocaleDateString('en-US', { 
-                      weekday: 'short', 
-                      year: 'numeric', 
-                      month: 'short', 
-                      day: 'numeric' 
-                    })}</span>
-                    {event.time && <span>{event.time}</span>}
-                    <span>{event.isRecurring}</span>
-                  </div>
-                  
-                  {event.notes && (
-                    <p className="text-sm text-gray-600 mb-2">{event.notes}</p>
-                  )}
-                  
-                  <div className="flex flex-wrap gap-1">
-                    {event.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
                 </div>
-                
-                {event.history && (
-                  <div className="text-right text-sm text-gray-500 ml-4">
-                    <div className="font-medium">
-                      {event.history.medianPct && event.history.medianPct > 0 ? '+' : ''}
-                      {event.history.medianPct}%
-                    </div>
-                    <div className="text-xs">
-                      N={event.history.sampleSize}
-                    </div>
-                  </div>
-                )}
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>
   );
 }
+

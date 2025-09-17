@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { CompanyEvent, CompanyTicker } from '@/types/company';
-import { loadCompanyEvents } from '@/lib/companyLoader';
+import { DatabaseEvent, CompanyTicker } from '@/types/company';
 import CompanyHeader from '@/components/CompanyHeader';
 import CalendarView from '@/components/CompanyCalendar/CalendarView';
 import ListView from '@/components/CompanyCalendar/ListView';
 import CompanyModal from '@/components/CompanyModal';
 import RecentlyAddedEvents from '@/components/RecentlyAddedEvents';
+import EventTypesList from '@/components/EventTypesList';
 
 type ViewMode = 'month' | 'week' | 'list';
 
@@ -16,16 +16,20 @@ export default function CompanyCalendarPage() {
   const params = useParams();
   const ticker = (params.ticker as string)?.toUpperCase() as CompanyTicker || 'NVDA';
   
-  const [events, setEvents] = useState<CompanyEvent[]>([]);
+  const [events, setEvents] = useState<DatabaseEvent[]>([]);
   const [viewMode, setViewMode] = useState<ViewMode>('month');
-  const [selectedEvent, setSelectedEvent] = useState<CompanyEvent | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<DatabaseEvent | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
   // Load events on mount
   useEffect(() => {
     const loadEvents = async () => {
       try {
-        const loadedEvents = await loadCompanyEvents(ticker);
+        const response = await fetch(`/api/events?ticker=${ticker}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const loadedEvents = await response.json();
         setEvents(loadedEvents);
       } catch (error) {
         console.warn('Failed to load company events:', error);
@@ -35,7 +39,7 @@ export default function CompanyCalendarPage() {
     loadEvents();
   }, [ticker]);
 
-  const handleEventClick = (event: CompanyEvent) => {
+  const handleEventClick = (event: DatabaseEvent) => {
     setSelectedEvent(event);
     setModalOpen(true);
   };
@@ -77,6 +81,9 @@ export default function CompanyCalendarPage() {
             />
           )}
         </div>
+
+        {/* Event Types List */}
+        <EventTypesList ticker={ticker} />
 
         {/* Recently Added Events */}
         <RecentlyAddedEvents ticker={ticker} />
