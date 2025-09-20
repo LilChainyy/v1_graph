@@ -1,6 +1,7 @@
 'use client';
 
 import { DatabaseEvent } from '@/types/company';
+import TagChip from '../TagChip';
 
 interface ListViewProps {
   events: DatabaseEvent[];
@@ -28,12 +29,12 @@ const parseEventDate = (dateString: string | undefined): Date | null => {
 export default function ListView({ events, onEventClick }: ListViewProps) {
   const sortedEvents = [...events]
     .filter(event => {
-      const dateString = event.start || (event as any).date;
+      const dateString = event.start || (event as DatabaseEvent & { date?: string }).date;
       return parseEventDate(dateString) !== null;
     })
     .sort((a, b) => {
-      const dateA = parseEventDate(a.start || (a as any).date);
-      const dateB = parseEventDate(b.start || (b as any).date);
+      const dateA = parseEventDate(a.start || (a as DatabaseEvent & { date?: string }).date);
+      const dateB = parseEventDate(b.start || (b as DatabaseEvent & { date?: string }).date);
       
       if (!dateA || !dateB) return 0;
       return dateA.getTime() - dateB.getTime();
@@ -53,7 +54,7 @@ export default function ListView({ events, onEventClick }: ListViewProps) {
           </div>
         ) : (
           sortedEvents.map((event) => {
-            const eventDate = parseEventDate(event.start || (event as any).date);
+            const eventDate = parseEventDate(event.start || (event as DatabaseEvent & { date?: string }).date);
             const isDirect = event.tickerId !== null;
             
             return (
@@ -84,6 +85,25 @@ export default function ListView({ events, onEventClick }: ListViewProps) {
                   </div>
                   
                     <h3 className="font-medium text-gray-900 mb-1">{event.title}</h3>
+                    
+                    {/* Tags */}
+                    {(event as DatabaseEvent & { tags?: string[] }).tags && (event as DatabaseEvent & { tags?: string[] }).tags!.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-2">
+                        {(event as DatabaseEvent & { tags?: string[] }).tags!.slice(0, 4).map((tag: string, tagIndex: number) => (
+                          <TagChip
+                            key={`${event.id}-${tag}-${tagIndex}`}
+                            tag={tag}
+                            size="sm"
+                            variant="outline"
+                          />
+                        ))}
+                        {(event as DatabaseEvent & { tags?: string[] }).tags!.length > 4 && (
+                          <span className="text-xs text-gray-500 px-1">
+                            +{(event as DatabaseEvent & { tags?: string[] }).tags!.length - 4} more
+                          </span>
+                        )}
+                      </div>
+                    )}
                     
                     <div className="flex items-center gap-4 text-sm text-gray-500 mb-2">
                       <span>{eventDate ? eventDate.toLocaleDateString('en-US', { 

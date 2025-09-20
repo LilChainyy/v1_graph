@@ -8,6 +8,17 @@ An educational tool that provides historical context for upcoming market events 
 - **Event Details**: Deep dive into specific events with historical context and scenario analysis
 - **Interactive Charts**: Visualize price movements around similar past events
 - **Historical Context**: Understand how markets reacted to similar events in the past
+- **Tag System**: Filter and categorize events with dynamic tags
+- **Social Features**: Vote, comment, and interact with events (via Supabase)
+
+## Architecture
+
+- **Events Database**: SQLite (Prisma) for event data
+- **Social Database**: PostgreSQL (Supabase) for tags, votes, comments
+- **Cross-DB Linking**: Uses `event_id` as common key
+- **Real-time Updates**: Supabase Realtime for social features
+
+> **Note**: See `TECHNICAL_DEBT.md` for database architecture considerations
 
 ## Quick Start
 

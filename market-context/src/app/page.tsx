@@ -7,15 +7,19 @@ import CalendarView from '@/components/Calendar/CalendarView';
 import ContextModal from '../components/feed/ContextModal';
 import WeeklyBanner from '@/components/WeeklyBanner';
 import SceneSetter from '@/components/SceneSetter';
+import EventMetadataTest from '@/components/EventMetadataTest';
+import EventTagsTest from '@/components/EventTagsTest';
 import { MarketEvent, BannerData, getSceneData, SceneData } from '@/lib/events';
+import { getEventTagsBatch } from '@/lib/eventTags';
 
 export default function Home() {
-  const [view, setView] = useState<'calendar' | 'feed'>('calendar');
+  const [view, setView] = useState<'calendar' | 'feed' | 'test'>('calendar');
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSector, setSelectedSector] = useState<string>('');
   const [selectedEvent, setSelectedEvent] = useState<MarketEvent | null>(null);
   const [activeTag, setActiveTag] = useState<string>('');
   const [sceneData, setSceneData] = useState<SceneData | null>(null);
+  const [eventsWithTags, setEventsWithTags] = useState<MarketEvent[]>(events);
 
   // Sample banner data - in a real app this would come from an API
   const bannerData: BannerData = {
@@ -53,6 +57,30 @@ export default function Home() {
     };
 
     loadSceneData();
+  }, []);
+
+  // Load tags for all events
+  useEffect(() => {
+    const loadEventTags = async () => {
+      try {
+        const eventIds = events.map(event => event.id);
+        const eventTags = await getEventTagsBatch(eventIds);
+        
+        // Merge tags into events
+        const eventsWithTagsData = events.map(event => ({
+          ...event,
+          tags: eventTags[event.id] || event.tags || []
+        }));
+        
+        setEventsWithTags(eventsWithTagsData);
+      } catch (error) {
+        console.warn('Failed to load event tags:', error);
+        // Keep original events if tags fail to load
+        setEventsWithTags(events);
+      }
+    };
+
+    loadEventTags();
   }, []);
 
   // Handle bond clicks
@@ -113,6 +141,16 @@ export default function Home() {
             >
               Feed
             </button>
+            <button
+              onClick={() => setView('test')}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                view === 'test'
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Test Tags
+            </button>
           </div>
         </div>
 
@@ -123,7 +161,12 @@ export default function Home() {
             {sceneData && <SceneSetter data={sceneData} />}
             
             {/* Calendar View */}
-            <CalendarView events={events} />
+            <CalendarView events={eventsWithTags} />
+          </>
+        ) : view === 'test' ? (
+          <>
+            {/* Event Tags Test */}
+            <EventTagsTest />
           </>
         ) : (
           <>
@@ -134,14 +177,14 @@ export default function Home() {
             <WeeklyBanner bannerData={bannerData} />
             
             {/* Feed Grid */}
-            {events.length === 0 ? (
+            {eventsWithTags.length === 0 ? (
               <div className="text-center py-12">
                 <div className="text-gray-500 text-lg">No events found</div>
                 <p className="text-gray-400 mt-2">Check back later for upcoming market events</p>
               </div>
             ) : (
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {events.map((event) => (
+                {eventsWithTags.map((event) => (
                   <EventCard
                     key={event.id}
                     event={event}

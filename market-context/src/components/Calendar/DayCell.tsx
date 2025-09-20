@@ -11,9 +11,10 @@ interface DayCellProps {
   onEventLeave: () => void;
   onEventFocus: (event: MarketEvent, position: { x: number; y: number }) => void;
   onEventBlur: () => void;
+  getEventTags: (eventId: string) => string[];
 }
 
-export default function DayCell({ date, events, onEventHover, onEventLeave, onEventFocus, onEventBlur }: DayCellProps) {
+export default function DayCell({ date, events, onEventHover, onEventLeave, onEventFocus, onEventBlur, getEventTags }: DayCellProps) {
   const today = getToday();
   const isPast = isBefore(date, today);
   const isToday = isSameDay(date, today);
@@ -75,6 +76,7 @@ export default function DayCell({ date, events, onEventHover, onEventLeave, onEv
             onLeave={handleEventLeave}
             onFocus={handleEventFocus}
             onBlur={handleEventBlur}
+            getEventTags={getEventTags}
           />
         ))}
         

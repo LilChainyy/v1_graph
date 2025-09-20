@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { DatabaseEvent } from '@/types/company';
+import TagChip from '../TagChip';
 
 interface CalendarViewProps {
   events: DatabaseEvent[];
@@ -146,7 +147,7 @@ export default function CalendarView({ events, onEventClick, viewMode = 'month' 
     
     events.forEach(event => {
       // Use the start field from DatabaseEvent, with fallback to date for backward compatibility
-      const dateString = event.start || (event as any).date;
+      const dateString = event.start || (event as DatabaseEvent & { date?: string }).date;
       const eventDate = parseEventDate(dateString);
       
       if (!eventDate) {
@@ -298,20 +299,45 @@ export default function CalendarView({ events, onEventClick, viewMode = 'month' 
                   // Determine if event is direct (ticker-specific) or indirect (global)
                   const isDirect = event.tickerId !== null;
                   
+                  // Get tags for this event
+                  const eventTags = (event as DatabaseEvent & { tags?: string[] }).tags || [];
+                  const displayTags = eventTags.slice(0, 2); // Show max 2 tags
+                  const hasMoreTags = eventTags.length > 2;
+
                   return (
-                    <button
-                      key={eventIndex}
-                      onClick={() => onEventClick(event)}
-                      className={`w-full text-left px-2 py-1 rounded text-xs font-medium border transition-colors hover:shadow-sm ${
-                        isDirect 
-                          ? 'bg-purple-100 text-purple-700 border-purple-200 hover:bg-purple-200' 
-                          : 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200'
-                      }`}
-                      title={`${event.category} • ${event.title}`}
-                    >
-                      <div className="truncate">{event.title}</div>
-                      <div className="text-xs opacity-75">{event.category}</div>
-                    </button>
+                    <div key={eventIndex} className="w-full">
+                      <button
+                        onClick={() => onEventClick(event)}
+                        className={`w-full text-left px-2 py-1 rounded text-xs font-medium border transition-colors hover:shadow-sm ${
+                          isDirect 
+                            ? 'bg-purple-100 text-purple-700 border-purple-200 hover:bg-purple-200' 
+                            : 'bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200'
+                        }`}
+                        title={`${event.category} • ${event.title}`}
+                      >
+                        <div className="truncate">{event.title}</div>
+                        <div className="text-xs opacity-75">{event.category}</div>
+                      </button>
+                      
+                      {/* Tags */}
+                      {displayTags.length > 0 && (
+                        <div className="mt-1 flex flex-wrap gap-1">
+                          {displayTags.map((tag: string, tagIndex: number) => (
+                            <TagChip
+                              key={`${event.id}-${tag}-${tagIndex}`}
+                              tag={tag}
+                              size="sm"
+                              variant="outline"
+                            />
+                          ))}
+                          {hasMoreTags && (
+                            <span className="text-xs text-gray-500 px-1">
+                              +{eventTags.length - 2}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   );
                 })}
                 {dayEvents.length > 3 && (

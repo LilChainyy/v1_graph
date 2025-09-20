@@ -5,6 +5,8 @@ import { MarketEvent } from '@/lib/events';
 import { getCalendarDays, isSameDay, getToday } from '@/utils/date';
 import DayCell from './DayCell';
 import Tooltip from './Tooltip';
+import TagFilter from '../TagFilter';
+import { useCalendarTags } from '@/hooks/useCalendarTags';
 
 interface CalendarViewProps {
   events: MarketEvent[];
@@ -15,8 +17,31 @@ export default function CalendarView({ events }: CalendarViewProps) {
   const [selectedEvent, setSelectedEvent] = useState<MarketEvent | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState<{ x: number; y: number } | null>(null);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
   const calendarDays = useMemo(() => getCalendarDays(currentMonth.getFullYear(), currentMonth.getMonth()), [currentMonth]);
+
+  // Get visible event IDs for the current month
+  const visibleEventIds = useMemo(() => {
+    const eventIds: string[] = [];
+    const startDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+    const endDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+    
+    events.forEach(event => {
+      const eventDate = new Date(event.dateISO);
+      if (eventDate >= startDate && eventDate <= endDate) {
+        eventIds.push(event.id);
+      }
+    });
+    
+    return eventIds;
+  }, [events, currentMonth]);
+
+  // Use the calendar tags hook
+  const { filteredEventIds, getEventTags } = useCalendarTags({
+    eventIds: visibleEventIds,
+    selectedTag
+  });
 
   // Detect touch device
   useEffect(() => {
@@ -49,7 +74,10 @@ export default function CalendarView({ events }: CalendarViewProps) {
   const eventsByDate = useMemo(() => {
     const grouped: { [key: string]: MarketEvent[] } = {};
     
-    events.forEach(event => {
+    // Only include events that are in the filtered list
+    const filteredEvents = events.filter(event => filteredEventIds.includes(event.id));
+    
+    filteredEvents.forEach(event => {
       const eventDate = new Date(event.dateISO);
       const dateKey = eventDate.toISOString().split('T')[0];
       
@@ -60,7 +88,7 @@ export default function CalendarView({ events }: CalendarViewProps) {
     });
     
     return grouped;
-  }, [events]);
+  }, [events, filteredEventIds]);
 
   const getEventsForDate = (date: Date): MarketEvent[] => {
     const dateKey = date.toISOString().split('T')[0];
@@ -150,6 +178,15 @@ export default function CalendarView({ events }: CalendarViewProps) {
         </div>
       </div>
 
+      {/* Tag Filter */}
+      <div className="mb-4">
+        <TagFilter
+          selectedTag={selectedTag}
+          onTagSelect={setSelectedTag}
+          className="max-w-xs"
+        />
+      </div>
+
       {/* Calendar Grid */}
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         {/* Day Headers */}
@@ -172,6 +209,7 @@ export default function CalendarView({ events }: CalendarViewProps) {
               onEventLeave={handleEventLeave}
               onEventFocus={handleEventFocus}
               onEventBlur={handleEventBlur}
+              getEventTags={getEventTags}
             />
           ))}
         </div>
